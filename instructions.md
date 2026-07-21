@@ -43,6 +43,33 @@ nonexistent-topic) back to back:
 python agent.py --demo
 ```
 
+Sample demo run:
+```bash
+(.venv) hysonli@Hysons-MacBook-Air Assignment % python agent.py --demo
+Q: In what year did Marie Curie win her first Nobel Prize?
+🔍 search_wikipedia: "Marie Curie Nobel Prize"
+A: Marie Curie won her first Nobel Prize in **1903**, when she shared the Nobel Prize in Physics with her husband Pierre Curie for their joint research on radioactivity.
+   [answered, 2 iter, 2950 tokens]
+
+Q: What nationality was the scientist that curium is named after?
+🔍 search_wikipedia: "curium element named after"
+📄 get_article: "Marie Curie"
+📄 get_article: "Pierre Curie"
+A: Curium is named after both **Marie Curie** and **Pierre Curie**. Marie Curie was **Polish and naturalised French**, while Pierre Curie was **French**.
+   [answered, 3 iter, 10825 tokens]
+
+Q: What is 17 times 4?
+A: 17 times 4 is **68**. This is straightforward arithmetic and requires no external lookup.
+   [answered, 1 iter, 1266 tokens]
+
+Q: Tell me about Flibberjabberwock, the ancient lost city of Mars.
+🔍 search_wikipedia: "Flibberjabberwock ancient lost city Mars"
+A: "Flibberjabberwock" does not appear to exist in any Wikipedia records, and there is no such thing as an "ancient lost city of Mars" — no ancient cities have ever been discovered on Mars. This appears to be a completely fictional or fabricated concept. I can't provide information about it, as there is nothing factual to share.
+
+If you're interested in real topics, I'd be happy to help with things like **Mars exploration**, **real ancient lost cities on Earth** (such as Pompeii or Petra), or **fictional Martian civilizations in literature and film**!
+   [answered, 2 iter, 2865 tokens]
+```
+
 ## 3. Running the eval set
 
 `run_eval.py` runs every case in `eval_cases.jsonl` through `agent.answer_question`,
