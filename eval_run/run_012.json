@@ -1,0 +1,1043 @@
+{
+  "run_number": 12,
+  "run_at": "2026-07-20T22:35:07-07:00",
+  "run_at_readable": "2026-07-20 22:35:07 PDT",
+  "agent_model": "claude-sonnet-4-6",
+  "judge_model": "claude-opus-4-8",
+  "system_prompt": "You are a careful research assistant with access to Wikipedia tools (search_wikipedia, get_article).\n\n## Tool-use workflow\n- Use search_wikipedia to find article titles, then get_article to read the full content.\n- Before stating any specific fact about a person, place, date, or event, verify it with the\n  tools — even if you already believe you know it.\n\n## When you can skip tools\nSkip tool calls only when the question has no checkable claim at all:\n- Arithmetic or logic (e.g. date and day-of-week math).\n- Definitions of everyday words.\n\n## Subjective or opinion questions\nA question can have no single correct answer — a preference, ranking, or value judgment. Decide\ntool use by what your answer will actually state, not by the question's subjectivity:\n- If your answer only frames the judgment (e.g. explains why there's no single answer), no tool\n  call is needed — there is nothing to verify.\n- If your answer states any specific claim as fact — a name, date, statistic, or \"widely\n  regarded/considered\" assertion — verify it with the tools first, the same as any other\n  factual claim.\n\n## Don't assume based on your training cutoff\nYour training data has a cutoff date and the current date may be well after it. Never conclude\nthat an event \"hasn't happened yet,\" is \"unresolved,\" or \"hasn't been decided\" based on what you\nremember — that conclusion is itself an unverified claim about the present, not a fact you already\nknow. Search first; only tell the user an event hasn't occurred if the tools confirm it (e.g. the\narticle describes it as upcoming/scheduled). If the tools can't find current information either,\nsay that plainly rather than guessing from memory.\n\n## Grounding and abstention\n- Answer only from what the tools return; if the tools can't confirm something, say so plainly.\n- Never pad an abstention with extra detail that wasn't in the retrieved content — omit\n  unconfirmed specifics rather than filling space.\n\n## Answer style\n- Keep final answers concise: 1-3 sentences.",
+  "num_cases": 20,
+  "judge_errors": 0,
+  "metrics_percent": {
+    "overall_correctness": 100.0,
+    "groundedness": 100.0,
+    "completeness": 100.0,
+    "search_calibration": 95.0,
+    "tool_use_fidelity": 90.0
+  },
+  "performance": {
+    "model_call_latency_s": {
+      "count": 48,
+      "mean": 2.486,
+      "p90": 3.725,
+      "p95": 4.853
+    },
+    "tool_call_latency_s": {
+      "count": 28,
+      "mean": 0.296,
+      "p90": 0.403,
+      "p95": 0.48
+    },
+    "input_tokens_per_case": {
+      "count": 20,
+      "mean": 5929.05,
+      "p90": 9210.4,
+      "p95": 14257.0
+    },
+    "output_tokens_per_case": {
+      "count": 20,
+      "mean": 154.05,
+      "p90": 265.8,
+      "p95": 276.55
+    }
+  },
+  "results": [
+    {
+      "id": "sf-01",
+      "category": "simple_factual",
+      "question": "What year did Barbara McClintock win the Nobel Prize in Physiology or Medicine?",
+      "reference_answer": "Barbara McClintock won the Nobel Prize in Physiology or Medicine in 1983.",
+      "gold_keywords": [
+        "1983"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia"
+      ],
+      "agent_answer": "Barbara McClintock won the Nobel Prize in Physiology or Medicine in **1983**.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 2,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Barbara McClintock Nobel Prize"
+          },
+          "wiki_url": null,
+          "latency_s": 0.3774,
+          "retrieved_content_preview": "[{\"title\": \"Barbara McClintock\", \"snippet\": \"Barbara McClintock (June 16, 1902 – September 2, 1992) was an American scientist and cytogeneticist who was awarded the 1983 Nobel Prize in Physiology\"}, {"
+        }
+      ],
+      "model_call_latencies_s": [
+        1.4983,
+        1.4674
+      ],
+      "usage": {
+        "input_tokens": 2777,
+        "output_tokens": 81,
+        "total_tokens": 2858
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer states McClintock won the Nobel Prize in 1983, matching the reference and gold keyword; the retrieved content explicitly states 'the 1983 Nobel Prize in Physiology.' The agent appropriately called search_wikipedia once, which resolved the single factual hop, and used only the expected tool.",
+      "judge_error": null
+    },
+    {
+      "id": "sf-02",
+      "category": "simple_factual",
+      "question": "When was the Treaty of Tordesillas signed?",
+      "reference_answer": "The Treaty of Tordesillas was signed in 1494.",
+      "gold_keywords": [
+        "1494"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia"
+      ],
+      "agent_answer": "The Treaty of Tordesillas was signed on **7 June 1494** in Tordesillas, Spain. It divided the newly discovered lands outside Europe between Spain and Portugal.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 2,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Treaty of Tordesillas"
+          },
+          "wiki_url": null,
+          "latency_s": 0.312,
+          "retrieved_content_preview": "[{\"title\": \"Treaty of Tordesillas\", \"snippet\": \"The Treaty of Tordesillas, signed in Tordesillas, Spain, on 7 June 1494, and ratified in Setúbal, Portugal, divided the newly discovered lands outside\"}"
+        }
+      ],
+      "model_call_latencies_s": [
+        2.6152,
+        2.6952
+      ],
+      "usage": {
+        "input_tokens": 2748,
+        "output_tokens": 101,
+        "total_tokens": 2849
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer states the treaty was signed on 7 June 1494, matching the retrieved snippet exactly and containing the gold keyword '1494'. The agent searched via search_wikipedia as expected, and all claims (date, location, division of lands) are supported by the retrieved content.",
+      "judge_error": null
+    },
+    {
+      "id": "sf-03",
+      "category": "simple_factual",
+      "question": "What's the capital city of Burkina Faso?",
+      "reference_answer": "The capital of Burkina Faso is Ouagadougou.",
+      "gold_keywords": [
+        "ouagadougou"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia"
+      ],
+      "agent_answer": "The capital city of Burkina Faso is **Ouagadougou**, as confirmed by the reference to it as the \"Burkinabé capital\" in the search results.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 2,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Burkina Faso capital city"
+          },
+          "wiki_url": null,
+          "latency_s": 0.5143,
+          "retrieved_content_preview": "[{\"title\": \"List of cities in Burkina Faso\", \"snippet\": \"This is a list of cities and towns in Burkina Faso. Abanga Abaye Aribinda Babakou Bagré Bagzan Balkuy Bangma Banga, Burkina Faso Banfora Bangab"
+        }
+      ],
+      "model_call_latencies_s": [
+        1.4813,
+        2.106
+      ],
+      "usage": {
+        "input_tokens": 2850,
+        "output_tokens": 105,
+        "total_tokens": 2955
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer correctly identifies Ouagadougou as the capital, which is supported by the retrieved snippet referring to 'the Burkinabé capital Ouagadougou' in the January 2022 coup entry. The agent searched once as expected using only search_wikipedia, which was sufficient for this simple factual question.",
+      "judge_error": null
+    },
+    {
+      "id": "sf-04",
+      "category": "simple_factual",
+      "question": "Which town was the composer Jean Sibelius born in?",
+      "reference_answer": "Jean Sibelius was born in Hämeenlinna, Finland.",
+      "gold_keywords": [
+        "hämeenlinna"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia",
+        "get_article"
+      ],
+      "agent_answer": "Jean Sibelius was born in **Hämeenlinna**, a town in Finland, which is known as the birthplace of the Finnish national composer.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 2,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Jean Sibelius composer birthplace"
+          },
+          "wiki_url": null,
+          "latency_s": 0.3295,
+          "retrieved_content_preview": "[{\"title\": \"Jean Sibelius\", \"snippet\": \"Jean Sibelius (/sɪˈbeɪliəs/; Finland Swedish: [ˈʃɑːn siˈbeːliʉs] ; born Johan Christian Julius Sibelius; 8 December 1865 – 20 September 1957) was a Finnish\"}, {"
+        }
+      ],
+      "model_call_latencies_s": [
+        2.0088,
+        1.5304
+      ],
+      "usage": {
+        "input_tokens": 2814,
+        "output_tokens": 97,
+        "total_tokens": 2911
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": false
+      },
+      "judge_reasoning": "The answer correctly states Hämeenlinna, supported by the retrieved Hämeenlinna snippet naming it as Sibelius's birthplace. The search was well-calibrated for this simple factual question. However, only search_wikipedia was invoked; get_article, which is in the expected tool list, was never called.",
+      "judge_error": null
+    },
+    {
+      "id": "sf-05",
+      "category": "simple_factual",
+      "question": "In what year was the Boston Marathon first held?",
+      "reference_answer": "The Boston Marathon was first held in 1897.",
+      "gold_keywords": [
+        "1897"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia",
+        "get_article"
+      ],
+      "agent_answer": "The Boston Marathon was first held on **April 19, 1897**, inspired by the success of the marathon event at the 1896 Summer Olympics in Athens, Greece. It is the world's oldest annual marathon.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 3,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Boston Marathon history first held"
+          },
+          "wiki_url": null,
+          "latency_s": 0.4247,
+          "retrieved_content_preview": "[{\"title\": \"Boston Marathon\", \"snippet\": \"The Boston Marathon is an annual marathon race hosted by eight cities and towns in greater Boston in eastern Massachusetts, United States. It is traditionally"
+        },
+        {
+          "tool": "get_article",
+          "input": {
+            "title": "Boston Marathon"
+          },
+          "wiki_url": "https://en.wikipedia.org/wiki/Boston_Marathon",
+          "latency_s": 0.2185,
+          "retrieved_content_preview": "The Boston Marathon is an annual marathon race hosted by eight cities and towns in greater Boston in eastern Massachusetts, United States. It is traditionally held on Patriots' Day, the third Monday o"
+        }
+      ],
+      "model_call_latencies_s": [
+        1.5656,
+        1.8672,
+        3.672
+      ],
+      "usage": {
+        "input_tokens": 8269,
+        "output_tokens": 161,
+        "total_tokens": 8430
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer states the Boston Marathon was first held April 19, 1897, matching the reference and gold keyword '1897'; the retrieved article confirms 'First held in 1897', 'On April 19, 1897', inspiration from the 1896 Olympics, and 'world's oldest annual marathon'. The agent searched and used both search_wikipedia and get_article as expected.",
+      "judge_error": null
+    },
+    {
+      "id": "sf-06",
+      "category": "simple_factual",
+      "question": "Where was the novelist Chinua Achebe born?",
+      "reference_answer": "Chinua Achebe was born in Ogidi, Nigeria.",
+      "gold_keywords": [
+        "ogidi"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia",
+        "get_article"
+      ],
+      "agent_answer": "Chinua Achebe was born on 16 November 1930 at Saint Simon's Church, Nneobi, near the Igbo village of **Ogidi**, in what was then the British colony of Nigeria (present-day Anambra State).",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 3,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Chinua Achebe novelist"
+          },
+          "wiki_url": null,
+          "latency_s": 0.217,
+          "retrieved_content_preview": "[{\"title\": \"Chinua Achebe\", \"snippet\": \"Chinua Achebe (/ˈtʃɪnwɑː əˈtʃɛbeɪ/ ; born Albert Chinụalụmọgụ Achebe; 16 November 1930 – 21 March 2013) was a Nigerian novelist, poet, and critic who\"}, {\"title"
+        },
+        {
+          "tool": "get_article",
+          "input": {
+            "title": "Chinua Achebe"
+          },
+          "wiki_url": "https://en.wikipedia.org/wiki/Chinua_Achebe",
+          "latency_s": 0.2229,
+          "retrieved_content_preview": "Chinua Achebe ( ; born Albert Chinụalụmọgụ Achebe; 16 November 1930 – 21 March 2013) was a Nigerian novelist, poet, and critic who is regarded as a central figure of modern African literature. His fir"
+        }
+      ],
+      "model_call_latencies_s": [
+        1.7415,
+        2.2196,
+        4.8146
+      ],
+      "usage": {
+        "input_tokens": 8233,
+        "output_tokens": 181,
+        "total_tokens": 8414
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer correctly identifies Ogidi (the gold keyword) as Achebe's birthplace, with details (Saint Simon's Church, Nneobi, near Ogidi, Nigeria/Anambra) all supported by the retrieved article. The agent searched and retrieved the article as expected, using both search_wikipedia and get_article, matching the expected tool list exactly.",
+      "judge_error": null
+    },
+    {
+      "id": "mh-01",
+      "category": "multi_hop",
+      "question": "In which city was the architect who designed the Sydney Opera House born?",
+      "reference_answer": "Jørn Utzon, the architect of the Sydney Opera House, was born in Copenhagen.",
+      "gold_keywords": [
+        "copenhagen"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia",
+        "get_article"
+      ],
+      "agent_answer": "The Sydney Opera House was designed by Danish architect **Jørn Utzon**, who was born in **Copenhagen**, Denmark.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 3,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Sydney Opera House architect designer"
+          },
+          "wiki_url": null,
+          "latency_s": 0.5104,
+          "retrieved_content_preview": "[{\"title\": \"Sydney Opera House\", \"snippet\": \"The Sydney Opera House is a multi-venue performing arts centre in Sydney, New South Wales, Australia. Located on the foreshore of Sydney Harbour, it is\"}, "
+        },
+        {
+          "tool": "get_article",
+          "input": {
+            "title": "Jørn Utzon"
+          },
+          "wiki_url": "https://en.wikipedia.org/wiki/J%C3%B8rn_Utzon",
+          "latency_s": 0.2434,
+          "retrieved_content_preview": "Jørn Oberg Utzon (Danish: [ˈjɶɐ̯ˀn ˈut.sʌn]; 9 April 1918 – 29 November 2008) was a Danish architect. In 1957, he won an international design competition for his design of the Sydney Opera House in Au"
+        }
+      ],
+      "model_call_latencies_s": [
+        1.5653,
+        8.0792,
+        2.2612
+      ],
+      "usage": {
+        "input_tokens": 8416,
+        "output_tokens": 147,
+        "total_tokens": 8563
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer correctly identifies Jørn Utzon born in Copenhagen, matching the reference and gold keyword. The get_article content explicitly states 'Utzon was born in Copenhagen,' supporting groundedness. The agent searched then retrieved the architect's article, resolving both hops, and used exactly the expected tools (search_wikipedia, get_article).",
+      "judge_error": null
+    },
+    {
+      "id": "mh-02",
+      "category": "multi_hop",
+      "question": "What is the 2026 FIFA World Cup Golden Boot winner's birthday?",
+      "reference_answer": "The 2026 FIFA World Cup Golden Boot winner was Kylian Mbappé, who was born on December 20, 1998.",
+      "gold_keywords": [
+        "December 20, 1998"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia",
+        "get_article"
+      ],
+      "agent_answer": "The 2026 FIFA World Cup Golden Boot winner was **Kylian Mbappé**, who was born on **December 20, 1998**. He won the award for scoring 10 goals during the tournament, his second consecutive Golden Boot.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 4,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "2026 FIFA World Cup Golden Boot winner"
+          },
+          "wiki_url": null,
+          "latency_s": 0.3942,
+          "retrieved_content_preview": "[{\"title\": \"2026 FIFA World Cup round of 32\", \"snippet\": \"knockout stage of the 2026 FIFA World Cup, took place from June 28 to July 3, 2026. It was the first time that a FIFA World Cup featured a sin"
+        },
+        {
+          "tool": "get_article",
+          "input": {
+            "title": "2026 FIFA World Cup"
+          },
+          "wiki_url": "https://en.wikipedia.org/wiki/2026_FIFA_World_Cup",
+          "latency_s": 0.2052,
+          "retrieved_content_preview": "The 2026 FIFA World Cup was the 23rd FIFA World Cup, the quadrennial international men's soccer championship contested by the national teams of the member associations of FIFA. The tournament began on"
+        },
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Kylian Mbappé birthday"
+          },
+          "wiki_url": null,
+          "latency_s": 0.2034,
+          "retrieved_content_preview": "[{\"title\": \"Kylian Mbappé\", \"snippet\": \"Kylian Mbappé Lottin (French pronunciation: [kiljan mbape lɔtɛ̃]; born 20 December 1998) is a French professional footballer who plays as a forward for\"}, {\"tit"
+        }
+      ],
+      "model_call_latencies_s": [
+        1.5516,
+        3.6795,
+        2.5569,
+        2.0838
+      ],
+      "usage": {
+        "input_tokens": 14101,
+        "output_tokens": 273,
+        "total_tokens": 14374
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The agent correctly identified Mbappé as the Golden Boot winner (supported by the 2026 World Cup article stating he won his second consecutive Golden Boot with ten goals) and found his birthday December 20, 1998 (supported by the Kylian Mbappé search snippet). It searched both hops—identifying the winner and looking up his birthday—using search_wikipedia and get_article as expected.",
+      "judge_error": null
+    },
+    {
+      "id": "mh-03",
+      "category": "multi_hop",
+      "question": "What year was the university where Alan Turing earned his PhD founded?",
+      "reference_answer": "Alan Turing earned his PhD at Princeton University, which was founded in 1746.",
+      "gold_keywords": [
+        "princeton",
+        "1746"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia",
+        "get_article"
+      ],
+      "agent_answer": "Alan Turing earned his PhD from **Princeton University**, which was founded in **1746** (as the College of New Jersey).",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 4,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Alan Turing PhD university"
+          },
+          "wiki_url": null,
+          "latency_s": 0.2457,
+          "retrieved_content_preview": "[{\"title\": \"Alan Turing\", \"snippet\": \"never-before-published memoir by Turing's older brother John F. Turing. Turing, Sara (2012). Alan M. Turing. Cambridge University Press. ISBN 978-1-107-02058-0\"},"
+        },
+        {
+          "tool": "get_article",
+          "input": {
+            "title": "Alan Turing"
+          },
+          "wiki_url": "https://en.wikipedia.org/wiki/Alan_Turing",
+          "latency_s": 0.2283,
+          "retrieved_content_preview": "Alan Mathison Turing (; 23 June 1912 – 7 June 1954) was an English mathematician, computer scientist, logician, cryptanalyst, philosopher and theoretical biologist. He was highly influential in the de"
+        },
+        {
+          "tool": "get_article",
+          "input": {
+            "title": "Princeton University"
+          },
+          "wiki_url": "https://en.wikipedia.org/wiki/Princeton_University",
+          "latency_s": 0.2291,
+          "retrieved_content_preview": "Princeton University is a private Ivy League research university in Princeton, New Jersey, United States. Founded in 1746 in Elizabeth as the  College of New Jersey, Princeton is the fourth-oldest ins"
+        }
+      ],
+      "model_call_latencies_s": [
+        2.4432,
+        1.4943,
+        3.5471,
+        1.7641
+      ],
+      "usage": {
+        "input_tokens": 17221,
+        "output_tokens": 265,
+        "total_tokens": 17486
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer correctly states Turing earned his PhD from Princeton (supported by the Alan Turing article: 'he obtained his PhD from the Department of Mathematics at Princeton') founded in 1746 (supported by Princeton article: 'Founded in 1746 in Elizabeth as the College of New Jersey'). Both gold keywords 'princeton' and '1746' are present. The agent searched and performed distinct lookups for both hops (Turing then Princeton), and used exactly the expected tools search_wikipedia and get_article.",
+      "judge_error": null
+    },
+    {
+      "id": "ns-01",
+      "category": "no_search",
+      "question": "If I buy 3 notebooks at $4.50 each, how much do I spend in total?",
+      "reference_answer": "The total is $13.50.",
+      "gold_keywords": [
+        "13.50"
+      ],
+      "expected_search": false,
+      "expected_tool_calls": [],
+      "agent_answer": "This is a straightforward arithmetic problem — no fact-checking tools needed!\n\n3 notebooks × $4.50 each = **$13.50**\n\nYou would spend **$13.50** in total.",
+      "searched": false,
+      "stop_reason": "answered",
+      "num_iterations": 1,
+      "tool_calls": [],
+      "model_call_latencies_s": [
+        2.7216
+      ],
+      "usage": {
+        "input_tokens": 1219,
+        "output_tokens": 49,
+        "total_tokens": 1268
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer correctly computes $13.50, matching the reference and gold keyword. No search was needed and none was performed, aligning with expected no_search behavior and empty tool call list.",
+      "judge_error": null
+    },
+    {
+      "id": "ns-02",
+      "category": "no_search",
+      "question": "What does the word 'ephemeral' mean?",
+      "reference_answer": "Ephemeral means lasting for a very short time.",
+      "gold_keywords": [
+        "short"
+      ],
+      "expected_search": false,
+      "expected_tool_calls": [],
+      "agent_answer": "The word **\"ephemeral\"** means lasting for a very short time; transitory or short-lived. It is often used to describe things that exist only briefly — for example, \"ephemeral beauty\" or \"ephemeral trends.\" The word originates from the Greek *ephēmeros*, meaning \"lasting only a day\" (*epi-* \"on\" + *hēmera* \"day\").",
+      "searched": false,
+      "stop_reason": "answered",
+      "num_iterations": 1,
+      "tool_calls": [],
+      "model_call_latencies_s": [
+        2.8805
+      ],
+      "usage": {
+        "input_tokens": 1208,
+        "output_tokens": 93,
+        "total_tokens": 1301
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer correctly defines 'ephemeral' as 'lasting for a very short time,' entailing the reference and containing the gold keyword 'short.' No search was performed (as expected for this no_search question), so groundedness defaults true, and tool_calls is empty matching the empty expected list.",
+      "judge_error": null
+    },
+    {
+      "id": "ns-03",
+      "category": "no_search",
+      "question": "If today is Wednesday, what day of the week will it be in 10 days?",
+      "reference_answer": "Ten days after a Wednesday is a Saturday.",
+      "gold_keywords": [
+        "saturday"
+      ],
+      "expected_search": false,
+      "expected_tool_calls": [],
+      "agent_answer": "In 10 days, it will be a **Saturday**.\n\nHere's the simple math:\n- 10 days = 1 week (7 days) + 3 extra days\n- Wednesday + 3 days = **Saturday**",
+      "searched": false,
+      "stop_reason": "answered",
+      "num_iterations": 1,
+      "tool_calls": [],
+      "model_call_latencies_s": [
+        2.5576
+      ],
+      "usage": {
+        "input_tokens": 1215,
+        "output_tokens": 57,
+        "total_tokens": 1272
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer correctly states Saturday (matching the reference and gold keyword), with valid reasoning (10 days = 7+3, Wednesday+3=Saturday). No search was needed and none was performed, and tool_calls is empty as expected.",
+      "judge_error": null
+    },
+    {
+      "id": "ae-01",
+      "category": "ambiguous_entity",
+      "question": "How long does Mercury take to complete one orbit around the Sun?",
+      "reference_answer": "Mercury orbits the Sun in about 88 Earth days.",
+      "gold_keywords": [
+        "88"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia",
+        "get_article"
+      ],
+      "agent_answer": "Mercury takes **88.0 Earth days** to complete one orbit around the Sun. This is known as its sidereal year, and it makes Mercury the fastest-orbiting planet in the Solar System.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 3,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Mercury planet orbit Sun"
+          },
+          "wiki_url": null,
+          "latency_s": 0.3879,
+          "retrieved_content_preview": "[{\"title\": \"Mercury (planet)\", \"snippet\": \"Mercury is the first planet from the Sun and the smallest in the Solar System. It is a rocky planet with a trace atmosphere and a surface gravity slightly\"},"
+        },
+        {
+          "tool": "get_article",
+          "input": {
+            "title": "Mercury (planet)"
+          },
+          "wiki_url": "https://en.wikipedia.org/wiki/Mercury_%28planet%29",
+          "latency_s": 0.2273,
+          "retrieved_content_preview": "Mercury is the first planet from the Sun and the smallest in the Solar System. It is a rocky planet with a trace atmosphere and a surface gravity slightly higher than that of Mars. The surface of Merc"
+        }
+      ],
+      "model_call_latencies_s": [
+        1.6357,
+        1.6258,
+        2.8491
+      ],
+      "usage": {
+        "input_tokens": 8083,
+        "output_tokens": 158,
+        "total_tokens": 8241
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer states Mercury's orbit is 88.0 Earth days (sidereal year), which matches the reference and contains the gold keyword '88'; this is directly supported by the retrieved article stating 'Mercury's sidereal year (88.0 Earth days)'. The agent searched and used both search_wikipedia and get_article as expected.",
+      "judge_error": null
+    },
+    {
+      "id": "ae-02",
+      "category": "ambiguous_entity",
+      "question": "What is the capital of the country of Georgia?",
+      "reference_answer": "The capital of Georgia (the country) is Tbilisi.",
+      "gold_keywords": [
+        "tbilisi"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia"
+      ],
+      "agent_answer": "The capital of the country of Georgia is **Tbilisi**. It is the largest city in Georgia, located on the banks of the Kura River.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 2,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "capital of Georgia country"
+          },
+          "wiki_url": null,
+          "latency_s": 0.3185,
+          "retrieved_content_preview": "[{\"title\": \"Capital of Georgia\", \"snippet\": \"Capital of Georgia may refer to: In country of Georgia: Tbilisi, present capital Kutaisi, historical capital of the Kingdom of Georgia and former legislati"
+        }
+      ],
+      "model_call_latencies_s": [
+        2.3013,
+        1.5589
+      ],
+      "usage": {
+        "input_tokens": 2783,
+        "output_tokens": 94,
+        "total_tokens": 2877
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer correctly identifies Tbilisi as the capital, supported by the Tbilisi snippet stating it is 'the capital and largest city of Georgia, located on the banks of the' Kura River. It contains the gold keyword 'tbilisi', searched appropriately for a factual lookup, and used only the expected search_wikipedia tool.",
+      "judge_error": null
+    },
+    {
+      "id": "un-01",
+      "category": "unanswerable",
+      "question": "What did Cleopatra's voice actually sound like?",
+      "reference_answer": "Cleopatra's actual voice is unknown.",
+      "gold_keywords": [],
+      "expected_search": false,
+      "expected_tool_calls": [],
+      "agent_answer": "No tools are needed here — this question has no checkable factual claim to verify.\n\nWe simply don't know what Cleopatra's voice actually sounded like. No audio recordings existed in antiquity, and ancient sources don't describe the specific qualities of her voice (pitch, tone, accent, etc.) in enough detail to reconstruct it.\n\nThe one thing ancient writers *do* mention — most notably Plutarch — is that her voice was considered remarkably pleasant and that she was a gifted polyglot, speaking multiple languages fluently. But that tells us about her *skill* and *charm*, not the actual sound of her voice.\n\nIn short, this is something history simply cannot answer.",
+      "searched": false,
+      "stop_reason": "answered",
+      "num_iterations": 1,
+      "tool_calls": [],
+      "model_call_latencies_s": [
+        5.1051
+      ],
+      "usage": {
+        "input_tokens": 1208,
+        "output_tokens": 152,
+        "total_tokens": 1360
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The agent correctly states Cleopatra's actual voice is unknown, matching the reference answer. No tools were called (searched=false, empty tool_calls), which aligns with the expected no-search behavior and empty expected tool list. No gold keywords required, and no retrieved content means groundedness defaults to true.",
+      "judge_error": null
+    },
+    {
+      "id": "un-02",
+      "category": "unanswerable",
+      "question": "Who is the most talented violinist who ever lived?",
+      "reference_answer": "There is no definitive answer, as it is a subjective question.",
+      "gold_keywords": [],
+      "expected_search": false,
+      "expected_tool_calls": [],
+      "agent_answer": "There is no single objectively correct answer to this question, as \"most talented\" is inherently subjective. That said, **Jascha Heifetz** (1901–1987) is perhaps the most frequently cited candidate, widely regarded as one of the greatest violinists of all time. Critics described him as \"the greatest violin virtuoso since Paganini,\" and fellow virtuoso Itzhak Perlman said the standards Heifetz set \"still remain\" and \"may never really be attained again.\" Other names often mentioned in the same conversation include Niccolò Paganini, Nathan Milstein, and Fritz Kreisler, depending on the criteria used.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 3,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "greatest violinists of all time"
+          },
+          "wiki_url": null,
+          "latency_s": 0.3647,
+          "retrieved_content_preview": "[{\"title\": \"Hilary Hahn\", \"snippet\": \"creativity. In August 2022, Classic FM listed Hahn as one of the 25 greatest violinists of all time. In January 2024 she was awarded the 2024 Avery Fisher\"}, {\"ti"
+        },
+        {
+          "tool": "get_article",
+          "input": {
+            "title": "Jascha Heifetz"
+          },
+          "wiki_url": "https://en.wikipedia.org/wiki/Jascha_Heifetz",
+          "latency_s": 0.2468,
+          "retrieved_content_preview": "Jascha Heifetz (; February 2 [O.S. January 20] 1901 – December 10, 1987) was a Russian-American violinist, widely regarded as one of the greatest violinists of all time. Born in Vilna, he was soon rec"
+        }
+      ],
+      "model_call_latencies_s": [
+        3.2642,
+        2.9106,
+        4.873
+      ],
+      "usage": {
+        "input_tokens": 8667,
+        "output_tokens": 344,
+        "total_tokens": 9011
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": false,
+        "tool_use_fidelity": false
+      },
+      "judge_reasoning": "The agent correctly noted the question is subjective with no objective answer, satisfying the abstention requirement, and the Heifetz claims (Paganini comparison, Perlman quote) are supported by the retrieved article. However, this is an unanswerable question where no search was expected, so both search_calibration (agent searched) and tool_use_fidelity (expected empty tool list, but two tools invoked) fail.",
+      "judge_error": null
+    },
+    {
+      "id": "fp-01",
+      "category": "false_premise",
+      "question": "Why did Stephen Hawking win the Nobel Prize in Physics?",
+      "reference_answer": "Stephen Hawking never won a Nobel Prize; the question's premise is false.",
+      "gold_keywords": [
+        "never"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia",
+        "get_article"
+      ],
+      "agent_answer": "Stephen Hawking **never won a Nobel Prize in Physics**. Despite his groundbreaking contributions — most notably the theoretical prediction that black holes emit radiation (known as \"Hawking radiation\") and his work with Roger Penrose on gravitational singularity theorems — he was never awarded the Nobel Prize. One key reason is that Hawking radiation has not been directly observed or experimentally confirmed, and the Nobel Prize in Physics requires discoveries to be empirically verified. Hawking died in 2018, and the Nobel Prize is not awarded posthumously.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 3,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Stephen Hawking Nobel Prize"
+          },
+          "wiki_url": null,
+          "latency_s": 0.2472,
+          "retrieved_content_preview": "[{\"title\": \"Penrose–Hawking singularity theorems\", \"snippet\": \"The Penrose–Hawking singularity theorems (after Roger Penrose and Stephen Hawking) are a set of results in general relativity that attemp"
+        },
+        {
+          "tool": "get_article",
+          "input": {
+            "title": "Stephen Hawking"
+          },
+          "wiki_url": "https://en.wikipedia.org/wiki/Stephen_Hawking",
+          "latency_s": 0.2283,
+          "retrieved_content_preview": "Stephen William Hawking (8 January 1942 – 14 March 2018) was an English theoretical astrophysicist, cosmologist, and author who was director of research at the Centre for Theoretical Cosmology at the "
+        }
+      ],
+      "model_call_latencies_s": [
+        1.8236,
+        1.653,
+        3.8301
+      ],
+      "usage": {
+        "input_tokens": 8070,
+        "output_tokens": 235,
+        "total_tokens": 8305
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer correctly states Hawking never won a Nobel Prize, correcting the false premise, and contains the gold keyword 'never'. Claims about Hawking radiation being unconfirmed, his 2018 death, and posthumous rules are supported by the retrieved Stephen Hawking article. The agent searched (expected) using both search_wikipedia and get_article, matching expected tools exactly.",
+      "judge_error": null
+    },
+    {
+      "id": "fp-02",
+      "category": "false_premise",
+      "question": "Which Italian city was Nikola Tesla born in?",
+      "reference_answer": "Tesla was not born in Italy; he was born in Smiljan, in the Austrian Empire (modern-day Croatia).",
+      "gold_keywords": [
+        "smiljan"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia"
+      ],
+      "agent_answer": "Nikola Tesla was **not** born in an Italian city. He was born in **Smiljan**, a village in what is now **Croatia** (then part of the Austrian Empire). Tesla was of Serbian descent, but his birthplace is Croatian, not Italian.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 2,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Nikola Tesla birthplace"
+          },
+          "wiki_url": null,
+          "latency_s": 0.2633,
+          "retrieved_content_preview": "[{\"title\": \"Nikola Tesla Museum\", \"snippet\": \"The Nikola Tesla Museum (Serbian: Музеј Николе Тесле, Muzej Nikole Tesle) is a science museum located in Belgrade in Serbia. It is dedicated to honoring\"}"
+        }
+      ],
+      "model_call_latencies_s": [
+        1.6138,
+        2.4226
+      ],
+      "usage": {
+        "input_tokens": 2771,
+        "output_tokens": 119,
+        "total_tokens": 2890
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The agent correctly corrected the false premise, stating Tesla was born in Smiljan (now Croatia, then Austrian Empire), not Italy. The retrieved content includes 'Smiljan, Croatia' as Tesla's birthplace, supporting the claims. Gold keyword 'smiljan' is present. It searched appropriately using only search_wikipedia as expected.",
+      "judge_error": null
+    },
+    {
+      "id": "la-01",
+      "category": "list_aggregation",
+      "question": "Which countries share a land border with Paraguay?",
+      "reference_answer": "Paraguay borders three countries: Argentina, Bolivia, and Brazil.",
+      "gold_keywords": [
+        "argentina",
+        "bolivia",
+        "brazil"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia",
+        "get_article"
+      ],
+      "agent_answer": "Paraguay shares land borders with **three countries**: **Bolivia** (to the northwest and north), **Brazil** (to the northeast and east), and **Argentina** (to the southeast, south, and west).",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 3,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Paraguay borders neighboring countries"
+          },
+          "wiki_url": null,
+          "latency_s": 0.2693,
+          "retrieved_content_preview": "[{\"title\": \"Borders of Brazil\", \"snippet\": \"borders of Brazil are the international borders that Brazil shares with neighbouring countries. Brazil has terrestrial boundaries with nine countries\"}, {\"t"
+        },
+        {
+          "tool": "get_article",
+          "input": {
+            "title": "Paraguay"
+          },
+          "wiki_url": "https://en.wikipedia.org/wiki/Paraguay",
+          "latency_s": 0.285,
+          "retrieved_content_preview": "Paraguay, officially the Republic of Paraguay, is a landlocked country located in the central region of South America. It borders Bolivia to the northwest and north, Brazil to the northeast and east, "
+        }
+      ],
+      "model_call_latencies_s": [
+        1.7984,
+        2.2751,
+        2.1029
+      ],
+      "usage": {
+        "input_tokens": 7908,
+        "output_tokens": 182,
+        "total_tokens": 8090
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer correctly names Bolivia, Brazil, and Argentina as the three bordering countries, matching the reference and all gold keywords. This is directly supported by the retrieved Paraguay article stating it 'borders Bolivia to the northwest and north, Brazil to the northeast and east, and Argentina to the southeast, south, and west.' The agent searched and used both search_wikipedia and get_article as expected.",
+      "judge_error": null
+    },
+    {
+      "id": "la-02",
+      "category": "list_aggregation",
+      "question": "Who were the members of the Beatles in their classic lineup?",
+      "reference_answer": "The Beatles' classic lineup was John Lennon, Paul McCartney, George Harrison, and Ringo Starr.",
+      "gold_keywords": [
+        "lennon",
+        "mccartney",
+        "harrison",
+        "starr"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia",
+        "get_article"
+      ],
+      "agent_answer": "The classic lineup of the Beatles consisted of four members: **John Lennon**, **Paul McCartney**, **George Harrison**, and **Ringo Starr**. This lineup came together in 1962 when Starr replaced Pete Best as drummer, and the group went on to become the best-selling music act of all time.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 3,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Beatles classic lineup members"
+          },
+          "wiki_url": null,
+          "latency_s": 0.352,
+          "retrieved_content_preview": "[{\"title\": \"The Jaded Hearts Club\", \"snippet\": \"the 1960s rock band The Beatles, as well as a number of other recordings. \\\"The Jaded Hearts Club: 'If we're playing Beatles songs and Paul McCartney's\""
+        },
+        {
+          "tool": "get_article",
+          "input": {
+            "title": "The Beatles"
+          },
+          "wiki_url": "https://en.wikipedia.org/wiki/The_Beatles",
+          "latency_s": 0.2137,
+          "retrieved_content_preview": "The Beatles were an English rock band formed in Liverpool in 1960. The band comprised John Lennon, Paul McCartney, George Harrison and Ringo Starr. They are regarded as the most influential band in po"
+        }
+      ],
+      "model_call_latencies_s": [
+        1.4734,
+        1.3941,
+        2.3689
+      ],
+      "usage": {
+        "input_tokens": 8020,
+        "output_tokens": 187,
+        "total_tokens": 8207
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer correctly names all four members (Lennon, McCartney, Harrison, Starr), matching the reference and all gold keywords. These facts plus the 1962 Starr/Best replacement and best-selling act claims are directly supported by the retrieved 'The Beatles' article. The agent searched and used both search_wikipedia and get_article as expected.",
+      "judge_error": null
+    }
+  ]
+}

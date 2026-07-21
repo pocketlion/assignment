@@ -151,6 +151,21 @@ class AgentTests(unittest.TestCase):
         self.assertIn("wikipedia is down", res["answer"])
         self.assertEqual(res["num_iterations"], 1)
 
+    def test_records_latencies(self):
+        client = FakeClient([
+            Response([tool_block("search_wikipedia", {"query": "x"})], "tool_use"),
+            Response([text_block("done")], "end_turn"),
+        ])
+        with patch.object(agent, "_client", return_value=client):
+            res = agent.answer_question("q", "sys", FAKE_TOOLS)
+        # one model-call latency per iteration (2 model calls here)
+        self.assertEqual(len(res["model_call_latencies_s"]), 2)
+        self.assertTrue(all(isinstance(x, float) and x >= 0 for x in res["model_call_latencies_s"]))
+        # each tool call carries a numeric latency
+        self.assertEqual(len(res["tool_calls"]), 1)
+        self.assertIsInstance(res["tool_calls"][0]["latency_s"], float)
+        self.assertGreaterEqual(res["tool_calls"][0]["latency_s"], 0.0)
+
 
 class LoadDotenvTests(unittest.TestCase):
     def _write(self, text):

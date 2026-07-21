@@ -1,0 +1,144 @@
+{
+  "run_number": 24,
+  "run_at": "2026-07-21T09:47:27-07:00",
+  "run_at_readable": "2026-07-21 09:47:27 PDT",
+  "agent_model": "claude-sonnet-5",
+  "judge_model": "claude-opus-4-8",
+  "system_prompt": "You are a careful research assistant with access to Wikipedia tools (search_wikipedia, get_article).\n\n## Tool-use workflow\n- Use search_wikipedia to find article titles, then get_article to read the full content.\n- You must always start with search_wikipedia to make sure you look for the correct article.\n- Before stating any specific fact about a person, place, date, or event, verify it with the\n  tools — even if you already believe you know it.\n\n## When you can skip tools\nSkip tool calls only when the question has no checkable claim at all:\n- Arithmetic or logic (e.g. date and day-of-week math).\n- Definitions of everyday words.\n\n## Subjective or opinion questions\nA question can have no single correct answer — a preference, ranking, or value judgment. Decide\ntool use by what your answer will actually state, not by the question's subjectivity:\n- If your answer only frames the judgment (e.g. explains why there's no single answer), no tool\n  call is needed — there is nothing to verify.\n- If your answer states any specific claim as fact — a name, date, statistic, or \"widely\n  regarded/considered\" assertion — verify it with the tools first, the same as any other\n  factual claim.\n\n## Don't assume based on your training cutoff\nYour training data has a cutoff date and the current date may be well after it. Never conclude\nthat an event \"hasn't happened yet,\" is \"unresolved,\" or \"hasn't been decided\" based on what you\nremember — that conclusion is itself an unverified claim about the present, not a fact you already\nknow. Search first; only tell the user an event hasn't occurred if the tools confirm it (e.g. the\narticle describes it as upcoming/scheduled). If the tools can't find current information either,\nsay that plainly rather than guessing from memory.\n\n## Grounding and abstention\n- Answer only from what the tools return; if the tools can't confirm something, say so plainly.\n- Never pad an abstention with extra detail that wasn't in the retrieved content — omit\n  unconfirmed specifics rather than filling space.\n\n## Answer style\n- Keep final answers concise: 1-3 sentences.",
+  "num_cases": 3,
+  "judge_errors": 0,
+  "metrics_percent": {
+    "overall_correctness": 0.0,
+    "groundedness": 100.0,
+    "completeness": 0.0,
+    "search_calibration": 0.0,
+    "tool_use_fidelity": 0.0
+  },
+  "performance": {
+    "model_call_latency_s": {
+      "count": 0,
+      "mean": null,
+      "p90": null,
+      "p95": null
+    },
+    "tool_call_latency_s": {
+      "count": 0,
+      "mean": null,
+      "p90": null,
+      "p95": null
+    },
+    "input_tokens_per_case": {
+      "count": 3,
+      "mean": 0,
+      "p90": 0.0,
+      "p95": 0.0
+    },
+    "output_tokens_per_case": {
+      "count": 3,
+      "mean": 0,
+      "p90": 0.0,
+      "p95": 0.0
+    }
+  },
+  "results": [
+    {
+      "id": "sf-01",
+      "category": "simple_factual",
+      "question": "What year did Barbara McClintock win the Nobel Prize in Physiology or Medicine?",
+      "reference_answer": "Barbara McClintock won the Nobel Prize in Physiology or Medicine in 1983.",
+      "gold_keywords": [
+        "1983"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia"
+      ],
+      "agent_answer": "Error: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': '`temperature` is deprecated for this model.'}, 'request_id': 'req_011CdFYT4j4Fc3QX7nHXRB1Z'}",
+      "searched": false,
+      "stop_reason": "error",
+      "num_iterations": 1,
+      "tool_calls": [],
+      "model_call_latencies_s": [],
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0
+      },
+      "grades": {
+        "overall_correctness": false,
+        "groundedness": true,
+        "completeness": false,
+        "search_calibration": false,
+        "tool_use_fidelity": false
+      },
+      "judge_reasoning": "The agent returned an API error instead of an answer, so it did not provide the correct year 1983. No search was performed (searched=false, empty tool_calls) though a search was expected, and no retrieved content exists (so groundedness defaults to true). Since expected tool call was required but none occurred, both search calibration and tool use fidelity fail.",
+      "judge_error": null
+    },
+    {
+      "id": "sf-02",
+      "category": "simple_factual",
+      "question": "When was the Treaty of Tordesillas signed?",
+      "reference_answer": "The Treaty of Tordesillas was signed in 1494.",
+      "gold_keywords": [
+        "1494"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia"
+      ],
+      "agent_answer": "Error: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': '`temperature` is deprecated for this model.'}, 'request_id': 'req_011CdFYTR5AXCZ3t8ZeXpyMJ'}",
+      "searched": false,
+      "stop_reason": "error",
+      "num_iterations": 1,
+      "tool_calls": [],
+      "model_call_latencies_s": [],
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0
+      },
+      "grades": {
+        "overall_correctness": false,
+        "groundedness": true,
+        "completeness": false,
+        "search_calibration": false,
+        "tool_use_fidelity": false
+      },
+      "judge_reasoning": "The agent returned an API error instead of an answer, so it never provided the year 1494 (fails correctness and completeness). No search was performed despite the question requiring one, and no tools were invoked, so search calibration and tool use fidelity fail. Groundedness defaults to true since no page was retrieved.",
+      "judge_error": null
+    },
+    {
+      "id": "sf-03",
+      "category": "simple_factual",
+      "question": "What's the capital city of Burkina Faso?",
+      "reference_answer": "The capital of Burkina Faso is Ouagadougou.",
+      "gold_keywords": [
+        "ouagadougou"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia"
+      ],
+      "agent_answer": "Error: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': '`temperature` is deprecated for this model.'}, 'request_id': 'req_011CdFYTjctJ6MPuncsGtnLU'}",
+      "searched": false,
+      "stop_reason": "error",
+      "num_iterations": 1,
+      "tool_calls": [],
+      "model_call_latencies_s": [],
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0
+      },
+      "grades": {
+        "overall_correctness": false,
+        "groundedness": true,
+        "completeness": false,
+        "search_calibration": false,
+        "tool_use_fidelity": false
+      },
+      "judge_reasoning": "The agent returned an API error instead of an answer, so it never provided 'Ouagadougou' (fails correctness and completeness). No tools were called (searched=false, empty tool_calls) despite a search being expected, so search_calibration and tool_use_fidelity fail. Groundedness defaults to true since no page was retrieved.",
+      "judge_error": null
+    }
+  ]
+}

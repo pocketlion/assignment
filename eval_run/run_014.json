@@ -1,0 +1,154 @@
+{
+  "run_number": 14,
+  "run_at": "2026-07-20T22:39:35-07:00",
+  "run_at_readable": "2026-07-20 22:39:35 PDT",
+  "agent_model": "claude-sonnet-4-6",
+  "judge_model": "claude-opus-4-8",
+  "system_prompt": "You are a careful research assistant with access to Wikipedia tools (search_wikipedia, get_article).\n\n## Tool-use workflow\n- Use search_wikipedia to find article titles, then get_article to read the full content.\n- Before stating any specific fact about a person, place, date, or event, verify it with the\n  tools — even if you already believe you know it.\n\n## When you can skip tools\nSkip tool calls only when the question has no checkable claim at all:\n- Arithmetic or logic (e.g. date and day-of-week math).\n- Definitions of everyday words.\n\n## Subjective or opinion questions\nA question can have no single correct answer — a preference, ranking, or value judgment. Decide\ntool use by what your answer will actually state, not by the question's subjectivity:\n- If your answer only frames the judgment (e.g. explains why there's no single answer), no tool\n  call is needed — there is nothing to verify.\n- If your answer states any specific claim as fact — a name, date, statistic, or \"widely\n  regarded/considered\" assertion — verify it with the tools first, the same as any other\n  factual claim.\n\n## Don't assume based on your training cutoff\nYour training data has a cutoff date and the current date may be well after it. Never conclude\nthat an event \"hasn't happened yet,\" is \"unresolved,\" or \"hasn't been decided\" based on what you\nremember — that conclusion is itself an unverified claim about the present, not a fact you already\nknow. Search first; only tell the user an event hasn't occurred if the tools confirm it (e.g. the\narticle describes it as upcoming/scheduled). If the tools can't find current information either,\nsay that plainly rather than guessing from memory.\n\n## Grounding and abstention\n- Answer only from what the tools return; if the tools can't confirm something, say so plainly.\n- Never pad an abstention with extra detail that wasn't in the retrieved content — omit\n  unconfirmed specifics rather than filling space.\n\n## Answer style\n- Keep final answers concise: 1-3 sentences.",
+  "num_cases": 2,
+  "judge_errors": 0,
+  "metrics_percent": {
+    "overall_correctness": 100.0,
+    "groundedness": 100.0,
+    "completeness": 100.0,
+    "search_calibration": 50.0,
+    "tool_use_fidelity": 50.0
+  },
+  "performance": {
+    "model_call_latency_s": {
+      "count": 6,
+      "mean": 2.999,
+      "p90": 4.49,
+      "p95": 4.665
+    },
+    "tool_call_latency_s": {
+      "count": 4,
+      "mean": 0.279,
+      "p90": 0.364,
+      "p95": 0.38
+    },
+    "input_tokens_per_case": {
+      "count": 2,
+      "mean": 8528,
+      "p90": 8629.6,
+      "p95": 8642.3
+    },
+    "output_tokens_per_case": {
+      "count": 2,
+      "mean": 257,
+      "p90": 333.0,
+      "p95": 342.5
+    }
+  },
+  "results": [
+    {
+      "id": "sf-04",
+      "category": "simple_factual",
+      "question": "Which town was the composer Jean Sibelius born in?",
+      "reference_answer": "Jean Sibelius was born in Hämeenlinna, Finland.",
+      "gold_keywords": [
+        "hämeenlinna"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia",
+        "get_article"
+      ],
+      "agent_answer": "Jean Sibelius was born in **Hämeenlinna** (Swedish: Tavastehus), in the Grand Duchy of Finland, on 8 December 1865.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 3,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Jean Sibelius composer birthplace"
+          },
+          "wiki_url": null,
+          "latency_s": 0.3959,
+          "retrieved_content_preview": "[{\"title\": \"Jean Sibelius\", \"snippet\": \"Jean Sibelius (/sɪˈbeɪliəs/; Finland Swedish: [ˈʃɑːn siˈbeːliʉs] ; born Johan Christian Julius Sibelius; 8 December 1865 – 20 September 1957) was a Finnish\"}, {"
+        },
+        {
+          "tool": "get_article",
+          "input": {
+            "title": "Jean Sibelius"
+          },
+          "wiki_url": "https://en.wikipedia.org/wiki/Jean_Sibelius",
+          "latency_s": 0.261,
+          "retrieved_content_preview": "Jean Sibelius (; Finland Swedish: [ˈʃɑːn siˈbeːliʉs] ; born Johan Christian Julius Sibelius; 8 December 1865 – 20 September 1957) was a Finnish composer of the late Romantic and early modern periods. "
+        }
+      ],
+      "model_call_latencies_s": [
+        1.4931,
+        1.8914,
+        2.0882
+      ],
+      "usage": {
+        "input_tokens": 8401,
+        "output_tokens": 162,
+        "total_tokens": 8563
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer correctly states Sibelius was born in Hämeenlinna, matching the reference and gold keyword. The retrieved article explicitly states 'Sibelius was born on 8 December 1865 in Hämeenlinna (Swedish: Tavastehus) in the Grand Duchy of Finland,' supporting all claims. The agent searched and used both expected tools (search_wikipedia and get_article), appropriate for this factual question.",
+      "judge_error": null
+    },
+    {
+      "id": "un-02",
+      "category": "unanswerable",
+      "question": "Who is the most talented violinist who ever lived?",
+      "reference_answer": "There is no definitive answer, as it is a subjective question.",
+      "gold_keywords": [],
+      "expected_search": false,
+      "expected_tool_calls": [],
+      "agent_answer": "There is no single objectively correct answer to this question, as \"most talented\" is inherently subjective. That said, **Jascha Heifetz** (1901–1987) is perhaps the most frequently cited candidate, being widely described as \"the greatest violin virtuoso since Paganini\" and setting the standard for 20th-century violin playing. Fellow violinist Itzhak Perlman noted that \"the goals he set still remain, and for violinists today it's rather depressing that they may never really be attained again.\" Other names commonly mentioned in the conversation include Niccolò Paganini, Nathan Milstein, and Fritz Kreisler, but Heifetz consistently tops most lists.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 3,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "greatest violinist of all time"
+          },
+          "wiki_url": null,
+          "latency_s": 0.2881,
+          "retrieved_content_preview": "[{\"title\": \"Jascha Heifetz\", \"snippet\": \"20] 1901 – December 10, 1987) was a Russian-American violinist, widely regarded as one of the greatest violinists of all time. Born in Vilna, he was soon recog"
+        },
+        {
+          "tool": "get_article",
+          "input": {
+            "title": "Jascha Heifetz"
+          },
+          "wiki_url": "https://en.wikipedia.org/wiki/Jascha_Heifetz",
+          "latency_s": 0.1699,
+          "retrieved_content_preview": "Jascha Heifetz (; February 2 [O.S. January 20] 1901 – December 10, 1987) was a Russian-American violinist, widely regarded as one of the greatest violinists of all time. Born in Vilna, he was soon rec"
+        }
+      ],
+      "model_call_latencies_s": [
+        3.5387,
+        4.1411,
+        4.8391
+      ],
+      "usage": {
+        "input_tokens": 8655,
+        "output_tokens": 352,
+        "total_tokens": 9007
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": false,
+        "tool_use_fidelity": false
+      },
+      "judge_reasoning": "The answer correctly acknowledges the question is subjective with no single objective answer, satisfying the abstention requirement, and its factual claims about Heifetz (Perlman quote, 'greatest violin virtuoso since Paganini') are supported by the retrieved article. However, this was an unanswerable/subjective question expecting no tool calls, yet the agent searched and called both search_wikipedia and get_article, making search_calibration and tool_use_fidelity false.",
+      "judge_error": null
+    }
+  ]
+}

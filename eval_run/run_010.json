@@ -1,0 +1,143 @@
+{
+  "run_number": 10,
+  "run_at": "2026-07-20T22:29:15-07:00",
+  "run_at_readable": "2026-07-20 22:29:15 PDT",
+  "agent_model": "claude-sonnet-4-6",
+  "judge_model": "claude-opus-4-8",
+  "system_prompt": "You are a careful research assistant with access to Wikipedia tools (search_wikipedia, get_article).\n\n## Tool-use workflow\n- Use search_wikipedia to find article titles, then get_article to read the full content.\n- Before stating any specific fact about a person, place, date, or event, verify it with the\n  tools — even if you already believe you know it.\n\n## When you can skip tools\nSkip tool calls only when the question has no checkable claim at all:\n- Arithmetic or logic (e.g. date and day-of-week math).\n- Definitions of everyday words.\n\n## Subjective or opinion questions\nA question can have no single correct answer — a preference, ranking, or value judgment. Decide\ntool use by what your answer will actually state, not by the question's subjectivity:\n- If your answer only frames the judgment (e.g. explains why there's no single answer), no tool\n  call is needed — there is nothing to verify.\n- If your answer states any specific claim as fact — a name, date, statistic, or \"widely\n  regarded/considered\" assertion — verify it with the tools first, the same as any other\n  factual claim.\n\n## Don't assume based on your training cutoff\nYour training data has a cutoff date and the current date may be well after it. Never conclude\nthat an event \"hasn't happened yet,\" is \"unresolved,\" or \"hasn't been decided\" based on what you\nremember — that conclusion is itself an unverified claim about the present, not a fact you already\nknow. Search first; only tell the user an event hasn't occurred if the tools confirm it (e.g. the\narticle describes it as upcoming/scheduled). If the tools can't find current information either,\nsay that plainly rather than guessing from memory.\n\n## Grounding and abstention\n- Answer only from what the tools return; if the tools can't confirm something, say so plainly.\n- Never pad an abstention with extra detail that wasn't in the retrieved content — omit\n  unconfirmed specifics rather than filling space.\n\n## Answer style\n- Keep final answers concise: 1-3 sentences.",
+  "num_cases": 2,
+  "judge_errors": 0,
+  "metrics_percent": {
+    "overall_correctness": 100.0,
+    "groundedness": 100.0,
+    "completeness": 100.0,
+    "search_calibration": 100.0,
+    "tool_use_fidelity": 100.0
+  },
+  "performance": {
+    "model_call_latency_s": {
+      "count": 5,
+      "mean": 2.954,
+      "p90": 4.04,
+      "p95": 4.303
+    },
+    "tool_call_latency_s": {
+      "count": 3,
+      "mean": 0.325,
+      "p90": 0.392,
+      "p95": 0.397
+    },
+    "input_tokens_per_case": {
+      "count": 2,
+      "mean": 7667,
+      "p90": 12834.2,
+      "p95": 13480.1
+    },
+    "output_tokens_per_case": {
+      "count": 2,
+      "mean": 184,
+      "p90": 240.8,
+      "p95": 247.9
+    }
+  },
+  "results": [
+    {
+      "id": "mh-02",
+      "category": "multi_hop",
+      "question": "What is the 2026 FIFA World Cup Golden Boot winner's birthday?",
+      "reference_answer": "The 2026 FIFA World Cup Golden Boot winner was Kylian Mbappé, who was born on December 20, 1998.",
+      "gold_keywords": [
+        "December 20, 1998"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia",
+        "get_article"
+      ],
+      "agent_answer": "The 2026 FIFA World Cup Golden Boot winner was **Kylian Mbappé**, who was born on **December 20, 1998**.",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 4,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "2026 FIFA World Cup Golden Boot winner"
+          },
+          "wiki_url": null,
+          "latency_s": 0.4032,
+          "retrieved_content_preview": "[{\"title\": \"2026 FIFA World Cup round of 32\", \"snippet\": \"knockout stage of the 2026 FIFA World Cup, took place from June 28 to July 3, 2026. It was the first time that a FIFA World Cup featured a sin"
+        },
+        {
+          "tool": "get_article",
+          "input": {
+            "title": "2026 FIFA World Cup"
+          },
+          "wiki_url": "https://en.wikipedia.org/wiki/2026_FIFA_World_Cup",
+          "latency_s": 0.2265,
+          "retrieved_content_preview": "The 2026 FIFA World Cup was the 23rd FIFA World Cup, the quadrennial international men's soccer championship contested by the national teams of the member associations of FIFA. The tournament began on"
+        },
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Kylian Mbappé footballer birthday"
+          },
+          "wiki_url": null,
+          "latency_s": 0.3459,
+          "retrieved_content_preview": "[{\"title\": \"Kylian Mbappé\", \"snippet\": \"Kylian Mbappé Lottin (French pronunciation: [kiljan mbape lɔtɛ̃]; born 20 December 1998) is a French professional footballer who plays as a forward for\"}, {\"tit"
+        }
+      ],
+      "model_call_latencies_s": [
+        3.2525,
+        1.6202,
+        3.0481,
+        2.2834
+      ],
+      "usage": {
+        "input_tokens": 14126,
+        "output_tokens": 255,
+        "total_tokens": 14381
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The get_article on '2026 FIFA World Cup' confirms Kylian Mbappé won the Golden Boot, and the search for 'Kylian Mbappé footballer birthday' returned 'born 20 December 1998', matching the reference and gold keyword. The agent searched both hops (identifying the winner, then his birthday) using both expected tools (search_wikipedia and get_article) and nothing else.",
+      "judge_error": null
+    },
+    {
+      "id": "un-01",
+      "category": "unanswerable",
+      "question": "What did Cleopatra's voice actually sound like?",
+      "reference_answer": "Cleopatra's actual voice is unknown.",
+      "gold_keywords": [],
+      "expected_search": false,
+      "expected_tool_calls": [],
+      "agent_answer": "This question has no verifiable factual answer that tools could confirm — no recordings of Cleopatra's voice exist, as she lived in the 1st century BC, long before any sound recording technology. There is simply no historical record of what her voice actually sounded like.\n\nWhat ancient sources *do* comment on is her linguistic ability: ancient writers like Plutarch noted that she was remarkably polyglot and persuasive in speech. Would you like me to look up what historical sources say about her communication skills?",
+      "searched": false,
+      "stop_reason": "answered",
+      "num_iterations": 1,
+      "tool_calls": [],
+      "model_call_latencies_s": [
+        4.5658
+      ],
+      "usage": {
+        "input_tokens": 1208,
+        "output_tokens": 113,
+        "total_tokens": 1321
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The agent correctly explains that Cleopatra's actual voice is unknown, with no recordings existing, matching the reference answer for this unanswerable question. It did not search (searched=false, empty tool_calls), which is well-calibrated since no tool call was expected. No gold keywords required, and groundedness defaults to true with no retrieved content.",
+      "judge_error": null
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "run_number": 19,
+  "run_at": "2026-07-20T22:56:27-07:00",
+  "run_at_readable": "2026-07-20 22:56:27 PDT",
+  "agent_model": "claude-sonnet-4-6",
+  "judge_model": "claude-opus-4-8",
+  "system_prompt": "You are a careful research assistant with access to Wikipedia tools (search_wikipedia, get_article).\n\n## Tool-use workflow\n- Use search_wikipedia to find article titles, then get_article to read the full content.\n- You must always start with search_wikipedia to make sure you search for the correct article.\n- Before stating any specific fact about a person, place, date, or event, verify it with the\n  tools — even if you already believe you know it.\n\n## When you can skip tools\nSkip tool calls only when the question has no checkable claim at all:\n- Arithmetic or logic (e.g. date and day-of-week math).\n- Definitions of everyday words.\n\n## Subjective or opinion questions\nA question can have no single correct answer — a preference, ranking, or value judgment. Decide\ntool use by what your answer will actually state, not by the question's subjectivity:\n- If your answer only frames the judgment (e.g. explains why there's no single answer), no tool\n  call is needed — there is nothing to verify.\n- If your answer states any specific claim as fact — a name, date, statistic, or \"widely\n  regarded/considered\" assertion — verify it with the tools first, the same as any other\n  factual claim.\n\n## Don't assume based on your training cutoff\nYour training data has a cutoff date and the current date may be well after it. Never conclude\nthat an event \"hasn't happened yet,\" is \"unresolved,\" or \"hasn't been decided\" based on what you\nremember — that conclusion is itself an unverified claim about the present, not a fact you already\nknow. Search first; only tell the user an event hasn't occurred if the tools confirm it (e.g. the\narticle describes it as upcoming/scheduled). If the tools can't find current information either,\nsay that plainly rather than guessing from memory.\n\n## Grounding and abstention\n- Answer only from what the tools return; if the tools can't confirm something, say so plainly.\n- Never pad an abstention with extra detail that wasn't in the retrieved content — omit\n  unconfirmed specifics rather than filling space.\n\n## Answer style\n- Keep final answers concise: 1-3 sentences.",
+  "num_cases": 1,
+  "judge_errors": 0,
+  "metrics_percent": {
+    "overall_correctness": 100.0,
+    "groundedness": 100.0,
+    "completeness": 100.0,
+    "search_calibration": 100.0,
+    "tool_use_fidelity": 100.0
+  },
+  "performance": {
+    "model_call_latency_s": {
+      "count": 4,
+      "mean": 1.974,
+      "p90": 2.35,
+      "p95": 2.385
+    },
+    "tool_call_latency_s": {
+      "count": 3,
+      "mean": 0.31,
+      "p90": 0.336,
+      "p95": 0.34
+    },
+    "input_tokens_per_case": {
+      "count": 1,
+      "mean": 14144,
+      "p90": 14144,
+      "p95": 14144
+    },
+    "output_tokens_per_case": {
+      "count": 1,
+      "mean": 255,
+      "p90": 255,
+      "p95": 255
+    }
+  },
+  "results": [
+    {
+      "id": "mh-03",
+      "category": "multi_hop",
+      "question": "What year was the university where Alan Turing earned his PhD founded?",
+      "reference_answer": "Alan Turing earned his PhD at Princeton University, which was founded in 1746.",
+      "gold_keywords": [
+        "princeton",
+        "1746"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia",
+        "get_article"
+      ],
+      "agent_answer": "Princeton University, where Alan Turing earned his PhD in 1938, was founded in **1746** (originally as the College of New Jersey).",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 4,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Alan Turing PhD university"
+          },
+          "wiki_url": null,
+          "latency_s": 0.2857,
+          "retrieved_content_preview": "[{\"title\": \"Alan Turing\", \"snippet\": \"never-before-published memoir by Turing's older brother John F. Turing. Turing, Sara (2012). Alan M. Turing. Cambridge University Press. ISBN 978-1-107-02058-0\"},"
+        },
+        {
+          "tool": "get_article",
+          "input": {
+            "title": "Alan Turing"
+          },
+          "wiki_url": "https://en.wikipedia.org/wiki/Alan_Turing",
+          "latency_s": 0.3443,
+          "retrieved_content_preview": "Alan Mathison Turing (; 23 June 1912 – 7 June 1954) was an English mathematician, computer scientist, logician, cryptanalyst, philosopher and theoretical biologist. He was highly influential in the de"
+        },
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Princeton University founding history"
+          },
+          "wiki_url": null,
+          "latency_s": 0.3014,
+          "retrieved_content_preview": "[{\"title\": \"History of Princeton University\", \"snippet\": \"Princeton University was founded in Elizabeth, New Jersey, in 1746 as the College of New Jersey, shortly before moving into the newly built Na"
+        }
+      ],
+      "model_call_latencies_s": [
+        2.1864,
+        1.6464,
+        2.42,
+        1.6428
+      ],
+      "usage": {
+        "input_tokens": 14144,
+        "output_tokens": 255,
+        "total_tokens": 14399
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer correctly states Princeton (where Turing earned his PhD in 1938 per the retrieved article) was founded in 1746, matching both gold keywords. Both facts are supported by retrieved content: the Alan Turing article confirms the Princeton PhD, and the Princeton search results confirm the 1746 founding. The agent searched both hops (Turing's PhD university and Princeton's founding) using both expected tools search_wikipedia and get_article, with no extraneous tools.",
+      "judge_error": null
+    }
+  ]
+}

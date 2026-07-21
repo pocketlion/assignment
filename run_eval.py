@@ -8,6 +8,7 @@ timestamped report to eval_run/run_<N>.json, where N increments per run.
 Usage:
     python run_eval.py                      # grade every case
     python run_eval.py --limit 5            # first 5 cases (quick smoke)
+    python run_eval.py --id sf-01 mh-02     # only these case ids
     python run_eval.py --cases c.jsonl --rater r.txt --out-dir eval_run
 """
 from __future__ import annotations
@@ -18,6 +19,7 @@ import json
 import os
 import re
 import sys
+from statistics import mean
 
 import agent
 
@@ -47,6 +49,16 @@ CRITERIA = [
     "search_calibration",
     "tool_use_fidelity",
 ]
+CRITERIA_SHORT = {
+    "overall_correctness": "correct",
+    "groundedness": "grounded",
+    "completeness": "complete",
+    "search_calibration": "search",
+    "tool_use_fidelity": "tools",
+}
+# Criteria surfaced in console logging (latency/token metrics stay in the report only).
+LOG_CRITERIA = ["overall_correctness", "groundedness", "completeness",
+                "search_calibration", "tool_use_fidelity"]
 
 # rater_prompt.txt placeholders we fill. We replace these explicitly (rather
 # than str.format) so the literal { } in the rubric's JSON example are left
@@ -67,6 +79,19 @@ def load_cases(path):
 def load_rater_template(path):
     with open(path, encoding="utf-8") as f:
         return f.read()
+
+
+def select_cases(cases, ids):
+    """Filter `cases` to those whose id is requested, preserving file order.
+
+    `ids` is a list of tokens, each of which may itself be comma-separated
+    (so --id sf-01 mh-02 and --id sf-01,mh-02 both work). Returns
+    (selected_cases, sorted_missing_ids).
+    """
+    wanted = {i.strip() for tok in ids for i in tok.split(",") if i.strip()}
+    selected = [c for c in cases if c.get("id") in wanted]
+    missing = sorted(wanted - {c.get("id") for c in cases})
+    return selected, missing
 
 
 # --- Prompt rendering -------------------------------------------------------
@@ -132,6 +157,7 @@ def _tool_summary(tool_calls):
             "tool": tc.get("tool"),
             "input": tc.get("input"),
             "wiki_url": tc.get("wiki_url"),
+            "latency_s": tc.get("latency_s"),
             "retrieved_content_preview": tc.get("retrieved_content_preview"),
         }
         for tc in tool_calls
@@ -153,6 +179,7 @@ def build_record(case, agent_result, verdict, judge_error):
         "stop_reason": agent_result.get("stop_reason"),
         "num_iterations": agent_result.get("num_iterations"),
         "tool_calls": _tool_summary(agent_result.get("tool_calls", [])),
+        "model_call_latencies_s": agent_result.get("model_call_latencies_s", []),
         "usage": agent_result.get("usage"),
         "grades": grades,
         "judge_reasoning": verdict.get("judge_reasoning") if isinstance(verdict, dict) else None,
@@ -180,15 +207,88 @@ def summarize(records):
     return metrics
 
 
+def _percentile(sorted_vals, p):
+    """Linear-interpolation percentile (numpy 'linear' method)."""
+    if not sorted_vals:
+        return None
+    if len(sorted_vals) == 1:
+        return sorted_vals[0]
+    k = (len(sorted_vals) - 1) * (p / 100.0)
+    lo = int(k)
+    hi = min(lo + 1, len(sorted_vals) - 1)
+    return sorted_vals[lo] + (sorted_vals[hi] - sorted_vals[lo]) * (k - lo)
+
+
+def _stats(values):
+    """mean / p90 / p95 (plus count) over non-None numeric values."""
+    values = [v for v in values if v is not None]
+    if not values:
+        return {"count": 0, "mean": None, "p90": None, "p95": None}
+    s = sorted(values)
+    return {
+        "count": len(values),
+        "mean": round(mean(values), 3),
+        "p90": round(_percentile(s, 90), 3),
+        "p95": round(_percentile(s, 95), 3),
+    }
+
+
+def performance_summary(records):
+    """Latency & token distributions across all graded cases.
+
+    Latencies are pooled over individual calls (every model call / every tool
+    call across all cases); token counts are per-case totals.
+    """
+    model_lat, tool_lat, in_tok, out_tok = [], [], [], []
+    for r in records:
+        model_lat += r.get("model_call_latencies_s") or []
+        tool_lat += [tc["latency_s"] for tc in r.get("tool_calls", [])
+                     if tc.get("latency_s") is not None]
+        u = r.get("usage") or {}
+        if u.get("input_tokens") is not None:
+            in_tok.append(u["input_tokens"])
+        if u.get("output_tokens") is not None:
+            out_tok.append(u["output_tokens"])
+    return {
+        "model_call_latency_s": _stats(model_lat),
+        "tool_call_latency_s": _stats(tool_lat),
+        "input_tokens_per_case": _stats(in_tok),
+        "output_tokens_per_case": _stats(out_tok),
+    }
+
+
+def _mark(v):
+    return "✓" if v is True else ("✗" if v is False else "?")
+
+
+def log_result(record, index, total, stream=sys.stderr):
+    """One compact line per case: id + pass/fail for the logged criteria."""
+    g = record["grades"]
+    marks = "  ".join(f"{_mark(g.get(c))} {CRITERIA_SHORT[c]}" for c in LOG_CRITERIA)
+    print(f"[{index}/{total}] {record['id']:<7} {marks}", file=stream)
+
+
+def failing_ids(records, criteria=None):
+    """(id, [failed criteria]) for cases failing any logged criterion (None=judge error, not a fail)."""
+    criteria = criteria or LOG_CRITERIA
+    out = []
+    for r in records:
+        failed = [c for c in criteria if r["grades"].get(c) is False]
+        if failed:
+            out.append((r["id"], failed))
+    return out
+
+
 def run(cases, system_prompt, rater_template, answer_fn=None, judge_fn=None, progress=True):
     answer_fn = answer_fn or agent.answer_question
     judge_fn = judge_fn or make_judge(agent._client())
     records = []
+    total = len(cases)
     for i, case in enumerate(cases, 1):
+        record = grade_case(case, system_prompt, rater_template, answer_fn, judge_fn)
+        records.append(record)
         if progress:
-            print(f"[{i}/{len(cases)}] {case.get('id','?')}: {case.get('question','')[:60]}",
-                  file=sys.stderr)
-        records.append(grade_case(case, system_prompt, rater_template, answer_fn, judge_fn))
+            log_result(record, i, total)   # one compact line, emitted immediately
     return records, summarize(records)
 
 
@@ -214,6 +314,7 @@ def build_report(run_number, system_prompt, records, metrics):
         "num_cases": len(records),
         "judge_errors": sum(1 for r in records if r["judge_error"]),
         "metrics_percent": metrics,
+        "performance": performance_summary(records),
         "results": records,
     }
 
@@ -230,10 +331,20 @@ def main(argv=None):
     p.add_argument("--cases", default=CASES_PATH)
     p.add_argument("--rater", default=RATER_PATH)
     p.add_argument("--out-dir", default=REPORT_DIR)
+    p.add_argument("--id", nargs="+", default=None, metavar="ID",
+                   help="only run cases with these ids (space- or comma-separated, "
+                        "e.g. --id sf-01 mh-02  or  --id sf-01,mh-02)")
     p.add_argument("--limit", type=int, default=None, help="only run the first N cases")
     args = p.parse_args(argv)
 
     cases = load_cases(args.cases)
+    if args.id:
+        cases, missing = select_cases(cases, args.id)
+        if missing:
+            print(f"warning: no case(s) matched id(s): {', '.join(missing)}", file=sys.stderr)
+        if not cases:
+            print("No cases to run after --id filter. Exiting.", file=sys.stderr)
+            return
     if args.limit:
         cases = cases[: args.limit]
     rater_template = load_rater_template(args.rater)
@@ -241,16 +352,27 @@ def main(argv=None):
 
     records, metrics = run(cases, system_prompt, rater_template)
     path, n = next_report_path(args.out_dir)
-    write_report(path, build_report(n, system_prompt, records, metrics))
+    report = build_report(n, system_prompt, records, metrics)
+    write_report(path, report)
 
-    print(f"\nRun {n}: graded {len(records)} cases (agent={agent.MODEL}, judge={JUDGE_MODEL})")
-    for c in CRITERIA:
+    print(f"\nRun {n}: {len(records)} cases (agent={agent.MODEL}, judge={JUDGE_MODEL})")
+    for c in LOG_CRITERIA:
         v = metrics[c]
         print(f"  {c:20s} {v:5.1f}%" if v is not None else f"  {c:20s}    n/a")
-    errs = sum(1 for r in records if r["judge_error"])
-    if errs:
-        print(f"  ({errs} case(s) had judge errors — see report)")
-    print(f"\nReport: {path}")
+
+    fails = failing_ids(records)
+    if fails:
+        print(f"\n  failing ({len(fails)}):")
+        for cid, failed in fails:
+            print(f"    {cid}: {', '.join(failed)}")
+    else:
+        print("\n  no failing cases")
+
+    errored = [r["id"] for r in records if r.get("judge_error")]
+    if errored:
+        print(f"\n  unevaluated (judge error): {', '.join(errored)}")
+
+    print(f"\nFull metrics, latency & per-case details in: {path}")
 
 
 if __name__ == "__main__":

@@ -120,7 +120,7 @@ class RunEndToEndTests(unittest.TestCase):
 
         report = R.build_report(1, "SYS", records, metrics)
         for key in ("run_at", "run_at_readable", "agent_model", "judge_model",
-                    "metrics_percent", "results", "num_cases", "judge_errors"):
+                    "metrics_percent", "performance", "results", "num_cases", "judge_errors"):
             self.assertIn(key, report)
         self.assertEqual(report["judge_errors"], 1)
 
@@ -152,6 +152,115 @@ class JudgeCallTests(unittest.TestCase):
         with patch.object(R, "JUDGE_TEMPERATURE", 0):
             R.make_judge(c)("prompt")
         self.assertEqual(rec["kwargs"]["temperature"], 0)
+
+
+class StatsTests(unittest.TestCase):
+    def test_percentiles_linear(self):
+        s = R._stats(list(range(1, 11)))  # 1..10
+        self.assertEqual(s["count"], 10)
+        self.assertEqual(s["mean"], 5.5)
+        self.assertEqual(s["p90"], 9.1)    # numpy 'linear' method
+        self.assertEqual(s["p95"], 9.55)
+
+    def test_single_and_empty(self):
+        self.assertEqual(R._stats([2.0])["p95"], 2.0)
+        empty = R._stats([])
+        self.assertEqual(empty["count"], 0)
+        self.assertIsNone(empty["mean"])
+        self.assertIsNone(empty["p90"])
+
+
+class PerformanceTests(unittest.TestCase):
+    def test_pools_latencies_and_tokens(self):
+        records = [
+            {"model_call_latencies_s": [0.1, 0.3], "tool_calls": [{"latency_s": 0.5}],
+             "usage": {"input_tokens": 100, "output_tokens": 10}},
+            {"model_call_latencies_s": [0.2],
+             "tool_calls": [{"latency_s": 0.7}, {"latency_s": 0.9}],
+             "usage": {"input_tokens": 200, "output_tokens": 20}},
+        ]
+        perf = R.performance_summary(records)
+        self.assertEqual(perf["model_call_latency_s"]["count"], 3)   # pooled over calls
+        self.assertAlmostEqual(perf["model_call_latency_s"]["mean"], 0.2)
+        self.assertEqual(perf["tool_call_latency_s"]["count"], 3)
+        self.assertAlmostEqual(perf["tool_call_latency_s"]["mean"], 0.7)
+        self.assertEqual(perf["input_tokens_per_case"]["count"], 2)  # per-case
+        self.assertAlmostEqual(perf["input_tokens_per_case"]["mean"], 150)
+        self.assertAlmostEqual(perf["output_tokens_per_case"]["mean"], 15)
+
+    def test_missing_fields_are_safe(self):
+        perf = R.performance_summary([{"usage": {}}])  # no latencies, no tokens
+        self.assertEqual(perf["model_call_latency_s"]["count"], 0)
+        self.assertIsNone(perf["input_tokens_per_case"]["mean"])
+
+
+class LogResultTests(unittest.TestCase):
+    def test_writes_one_compact_line(self):
+        import io
+        rec = {"id": "t-1", "grades": {c: True for c in R.CRITERIA}}
+        buf = io.StringIO()
+        R.log_result(rec, 1, 3, stream=buf)
+        out = buf.getvalue()
+        self.assertIn("t-1", out)
+        for c in R.LOG_CRITERIA:                       # all logged criteria shown
+            self.assertIn(R.CRITERIA_SHORT[c], out)
+        self.assertIn("grounded", out)                 # groundedness now included
+        self.assertEqual(out.count("\n"), 1)           # still exactly one line
+
+    def test_marks_reflect_grades(self):
+        import io
+        grades = {c: True for c in R.CRITERIA}
+        grades["completeness"] = False
+        buf = io.StringIO()
+        R.log_result({"id": "t-2", "grades": grades}, 2, 3, stream=buf)
+        out = buf.getvalue()
+        self.assertIn("✗ complete", out)
+        self.assertIn("✓ correct", out)
+
+
+class FailingIdsTests(unittest.TestCase):
+    def _rec(self, cid, **overrides):
+        grades = {c: True for c in R.CRITERIA}
+        grades.update(overrides)
+        return {"id": cid, "grades": grades}
+
+    def test_lists_failures_with_criteria(self):
+        records = [
+            self._rec("a"),
+            self._rec("b", completeness=False),
+            self._rec("c", overall_correctness=False, tool_use_fidelity=False),
+            self._rec("d", **{c: None for c in R.CRITERIA}),  # judge error -> not a "fail"
+        ]
+        fails = R.failing_ids(records)
+        self.assertEqual([cid for cid, _ in fails], ["b", "c"])
+        self.assertEqual(dict(fails)["c"], ["overall_correctness", "tool_use_fidelity"])
+
+    def test_groundedness_counted(self):
+        # groundedness is now in LOG_CRITERIA, so a groundedness failure is flagged.
+        records = [self._rec("a", groundedness=False)]
+        self.assertEqual(R.failing_ids(records), [("a", ["groundedness"])])
+
+
+class SelectCasesTests(unittest.TestCase):
+    CASES = [{"id": "a"}, {"id": "b"}, {"id": "c"}]
+
+    def test_filters_preserving_file_order(self):
+        selected, missing = R.select_cases(self.CASES, ["c", "a"])
+        self.assertEqual([c["id"] for c in selected], ["a", "c"])  # file order, not arg order
+        self.assertEqual(missing, [])
+
+    def test_comma_separated_token(self):
+        selected, _ = R.select_cases(self.CASES, ["a,b"])
+        self.assertEqual([c["id"] for c in selected], ["a", "b"])
+
+    def test_mixed_and_whitespace(self):
+        selected, _ = R.select_cases(self.CASES, [" a , c ", "b"])
+        self.assertEqual([c["id"] for c in selected], ["a", "b", "c"])
+
+    def test_reports_missing(self):
+        selected, missing = R.select_cases(self.CASES, ["a", "zzz", "qqq"])
+        self.assertEqual([c["id"] for c in selected], ["a"])
+        self.assertEqual(missing, ["qqq", "zzz"])  # sorted
 
 
 if __name__ == "__main__":

@@ -5,11 +5,11 @@
 CLI:  python agent.py "question" [--json]   |   python agent.py --demo
 """
 from __future__ import annotations
-import json, os, sys, urllib.parse
+import json, os, sys, time, urllib.parse
 import wiki
 
 # --- Config -----------------------------------------------------------------
-MODEL = "claude-sonnet-4-6"
+MODEL = "claude-sonnet-5"
 MAX_ITERATIONS = 6           # model turns before stopping with "max_iterations"
 TEMPERATURE = 0
 MAX_TOKENS = 1024
@@ -91,15 +91,18 @@ def answer_question(question, system_prompt, tools_impl=None):
     tools_impl = DEFAULT_TOOLS if tools_impl is None else tools_impl
     usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
     result = {"question": question, "answer": "", "searched": False, "tool_calls": [],
-              "num_iterations": 0, "stop_reason": "answered", "model": MODEL, "usage": usage}
+              "num_iterations": 0, "stop_reason": "answered", "model": MODEL, "usage": usage,
+              "model_call_latencies_s": []}
     messages = [{"role": "user", "content": question}]
     try:
         client = _client()
         for i in range(MAX_ITERATIONS):
             result["num_iterations"] = i + 1
+            _t0 = time.perf_counter()
             resp = client.messages.create(
                 model=MODEL, max_tokens=MAX_TOKENS, temperature=TEMPERATURE,
                 system=system_prompt, tools=TOOLS, messages=messages)
+            result["model_call_latencies_s"].append(round(time.perf_counter() - _t0, 4))
             u = getattr(resp, "usage", None)
             if u is not None:
                 usage["input_tokens"] += getattr(u, "input_tokens", 0) or 0
@@ -119,7 +122,9 @@ def answer_question(question, system_prompt, tools_impl=None):
                 if block.type != "tool_use":
                     continue
                 result["searched"] = True
+                _t0 = time.perf_counter()
                 raw = tools_impl[block.name](**block.input)   # tool errors -> outer except
+                _latency = round(time.perf_counter() - _t0, 4)
                 content = raw if isinstance(raw, str) else json.dumps(raw, ensure_ascii=False)
                 result["tool_calls"].append({
                     "tool": block.name,
@@ -127,6 +132,7 @@ def answer_question(question, system_prompt, tools_impl=None):
                     "wiki_url": _wiki_url(block.name, block.input),
                     "retrieved_content": content,
                     "retrieved_content_preview": content[:200],
+                    "latency_s": _latency,
                 })
                 tool_results.append(
                     {"type": "tool_result", "tool_use_id": block.id, "content": content})

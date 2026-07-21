@@ -53,6 +53,7 @@ Does the "answer" contains all the gold keywords provided?
 ### 4. Search Calibration ###
 Judge whether the agent's decision to search (or not) and how much it searched was well-calibrated
 to what the question actually required, using "searched" and "tool_calls" in the agent result.
+- If Question category is "unanswerable", always set search_calibration=true as the agent may or may not call tools.
 - If Expected search tool call or not above is false, search_calibration=true only if the agent did
   not call any tools — searching a question that needed none is miscalibrated.
 - If it is true, search_calibration=true only if the agent searched, AND searched deeply enough to
@@ -64,6 +65,7 @@ to what the question actually required, using "searched" and "tool_calls" in the
 ### 5. Tool Use Fidelity ###
 Compare the set of distinct tool names actually present in "tool_calls" against the Expected tool
 calls list above.
+- If Question category is "unanswerable", always set tool_use_fidelity=true as the agent may or may not call tools.
 - tool_use_fidelity=true only if every tool named in Expected tool calls was invoked at least once,
   and no tool outside that list was invoked.
 - If Expected tool calls is empty, fidelity requires "tool_calls" to be empty.
