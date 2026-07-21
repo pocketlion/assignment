@@ -1,6 +1,6 @@
 # Running the Prototype
 
-A small Wikipedia tool-use agent (`agent.py` + `wiki.py`) with an LLM-judged
+A small question answering agent (`agent.py` + `wiki.py`) with an LLM-judged
 evaluation harness (`run_eval.py`).
 
 ## 1. Setup
@@ -56,16 +56,44 @@ Grade the full eval set:
 python run_eval.py
 ```
 
+Sample eval run:
+```bash
+(.venv) hysonli@Hysons-MacBook-Air Assignment % python run_eval.py 
+[1/20] sf-01   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[2/20] sf-02   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[3/20] sf-03   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[4/20] sf-04   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[5/20] sf-05   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[6/20] sf-06   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[7/20] mh-01   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[8/20] mh-02   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[9/20] mh-03   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[10/20] ns-01   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[11/20] ns-02   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[12/20] ns-03   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[13/20] ae-01   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[14/20] ae-02   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[15/20] un-01   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[16/20] un-02   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[17/20] fp-01   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[18/20] fp-02   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[19/20] la-01   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+[20/20] la-02   ✓ correct  ✓ grounded  ✓ complete  ✓ search  ✓ tools
+
+Run 26: 20 cases (agent=claude-sonnet-4-6, judge=claude-opus-4-8)
+  overall_correctness  100.0%
+  groundedness         100.0%
+  completeness         100.0%
+  search_calibration   100.0%
+  tool_use_fidelity    100.0%
+
+  no failing cases
+```
+
 Quick smoke test on the first few cases only:
 
 ```bash
 python run_eval.py --limit 5
-```
-
-Point at a different cases file, rubric, or output directory:
-
-```bash
-python run_eval.py --cases my_cases.jsonl --rater my_rubric.txt --out-dir my_runs
 ```
 
 Each run prints a pass-rate summary per criterion
