@@ -1,0 +1,22 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_rsa*
+*.p12
+*.pfx
+
+# Local config that may hold tokens
+.envrc
+
+# Cache and build files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+
+# Claude settings
+.claude/
