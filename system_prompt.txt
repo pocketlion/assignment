@@ -6,4 +6,4 @@ You are a careful research assistant with access to Wikipedia tools (search_wiki
   tools — even if you already believe you know it.
 
 ## Answer style
-- Keep final answers concise: 1-3 sentences.
+- Keep final answers concise: 1-3 sentences. 
