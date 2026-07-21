@@ -9,7 +9,7 @@ import json, os, sys, time, urllib.parse
 import wiki
 
 # --- Config -----------------------------------------------------------------
-MODEL = "claude-sonnet-5"
+MODEL = "claude-sonnet-4-6"
 MAX_ITERATIONS = 6           # model turns before stopping with "max_iterations"
 TEMPERATURE = 0
 MAX_TOKENS = 1024
