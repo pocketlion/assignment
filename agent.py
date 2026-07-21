@@ -5,7 +5,7 @@
 CLI:  python agent.py "question" [--json]   |   python agent.py --demo
 """
 from __future__ import annotations
-import json, os, sys
+import json, os, sys, urllib.parse
 import wiki
 
 # --- Config -----------------------------------------------------------------
@@ -79,6 +79,14 @@ def _client():
     return anthropic.Anthropic()
 
 # --- Core loop --------------------------------------------------------------
+def _wiki_url(tool, tool_input):
+    """Canonical Wikipedia URL for a tool call (None for search — no single page)."""
+    if tool == "get_article":
+        title = (tool_input or {}).get("title", "")
+        if title:
+            return "https://en.wikipedia.org/wiki/" + urllib.parse.quote(title.replace(" ", "_"))
+    return None
+
 def answer_question(question, system_prompt, tools_impl=None):
     tools_impl = DEFAULT_TOOLS if tools_impl is None else tools_impl
     usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
@@ -113,8 +121,13 @@ def answer_question(question, system_prompt, tools_impl=None):
                 result["searched"] = True
                 raw = tools_impl[block.name](**block.input)   # tool errors -> outer except
                 content = raw if isinstance(raw, str) else json.dumps(raw, ensure_ascii=False)
-                result["tool_calls"].append(
-                    {"tool": block.name, "input": block.input, "result_retrieved": raw})
+                result["tool_calls"].append({
+                    "tool": block.name,
+                    "input": block.input,
+                    "wiki_url": _wiki_url(block.name, block.input),
+                    "retrieved_content": content,
+                    "retrieved_content_preview": content[:200],
+                })
                 tool_results.append(
                     {"type": "tool_result", "tool_use_id": block.id, "content": content})
             messages.append({"role": "user", "content": tool_results})

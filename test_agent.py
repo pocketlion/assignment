@@ -6,6 +6,7 @@ fake client that returns canned responses, and pass a fake tools_impl.
     python -m unittest test_agent -v
 """
 
+import json
 import os
 import tempfile
 import unittest
@@ -99,7 +100,11 @@ class AgentTests(unittest.TestCase):
         call = res["tool_calls"][0]
         self.assertEqual(call["tool"], "search_wikipedia")
         self.assertEqual(call["input"], {"query": "marie curie"})
-        self.assertEqual(call["result_retrieved"], [{"title": "Marie Curie", "snippet": "physicist"}])
+        expected_content = json.dumps(
+            [{"title": "Marie Curie", "snippet": "physicist"}], ensure_ascii=False)
+        self.assertEqual(call["retrieved_content"], expected_content)
+        self.assertEqual(call["retrieved_content_preview"], expected_content[:200])
+        self.assertIsNone(call["wiki_url"])  # search has no single page URL
 
         # Usage summed across both API calls (10+5 each).
         self.assertEqual(res["usage"]["input_tokens"], 20)
@@ -183,6 +188,30 @@ class LoadDotenvTests(unittest.TestCase):
 
     def test_missing_file_is_noop(self):
         agent._load_dotenv("/no/such/file/.env")  # must not raise
+
+
+class WikiUrlTests(unittest.TestCase):
+    def test_get_article_url(self):
+        self.assertEqual(
+            agent._wiki_url("get_article", {"title": "Marie Curie"}),
+            "https://en.wikipedia.org/wiki/Marie_Curie",
+        )
+
+    def test_search_has_no_url(self):
+        self.assertIsNone(agent._wiki_url("search_wikipedia", {"query": "x"}))
+
+    def test_get_article_tool_call_fields(self):
+        # A get_article call should surface a wiki_url + retrieved_content(+preview).
+        client = FakeClient([
+            Response([tool_block("get_article", {"title": "Marie Curie"})], "tool_use"),
+            Response([text_block("done")], "end_turn"),
+        ])
+        with patch.object(agent, "_client", return_value=client):
+            res = agent.answer_question("q", "sys", FAKE_TOOLS)
+        call = res["tool_calls"][0]
+        self.assertEqual(call["wiki_url"], "https://en.wikipedia.org/wiki/Marie_Curie")
+        self.assertEqual(call["retrieved_content"], "Extract of Marie Curie.")
+        self.assertEqual(call["retrieved_content_preview"], "Extract of Marie Curie.")
 
 
 if __name__ == "__main__":

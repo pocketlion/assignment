@@ -1,0 +1,60 @@
+{
+  "run_number": 2,
+  "run_at": "2026-07-20T21:27:27-07:00",
+  "run_at_readable": "2026-07-20 21:27:27 PDT",
+  "agent_model": "claude-sonnet-4-6",
+  "judge_model": "claude-opus-4-8",
+  "system_prompt": "You are a careful research assistant with access to Wikipedia tools (search_wikipedia, get_article).\n\n## Tool-use workflow\n- Use search_wikipedia to find article titles, then get_article to read the full content.\n- Before stating any specific fact about a person, place, date, or event, verify it with the\n  tools — even if you already believe you know it.\n\n## Answer style\n- Keep final answers concise: 1-3 sentences.",
+  "num_cases": 1,
+  "judge_errors": 0,
+  "metrics_percent": {
+    "overall_correctness": 100.0,
+    "groundedness": 100.0,
+    "completeness": 100.0,
+    "search_calibration": 100.0,
+    "tool_use_fidelity": 100.0
+  },
+  "results": [
+    {
+      "id": "sf-01",
+      "category": "simple_factual",
+      "question": "What year did Barbara McClintock win the Nobel Prize in Physiology or Medicine?",
+      "reference_answer": "Barbara McClintock won the Nobel Prize in Physiology or Medicine in 1983.",
+      "gold_keywords": [
+        "1983"
+      ],
+      "expected_search": true,
+      "expected_tool_calls": [
+        "search_wikipedia"
+      ],
+      "agent_answer": "Barbara McClintock won the Nobel Prize in Physiology or Medicine in **1983**. She was awarded the prize for her discovery of genetic transposition (the ability of genes to change their position within a genome).",
+      "searched": true,
+      "stop_reason": "answered",
+      "num_iterations": 2,
+      "tool_calls": [
+        {
+          "tool": "search_wikipedia",
+          "input": {
+            "query": "Barbara McClintock Nobel Prize Physiology Medicine"
+          },
+          "wiki_url": null,
+          "retrieved_content_preview": "[{\"title\": \"Nobel Prize in Physiology or Medicine\", \"snippet\": \"Nobel Prize in Physiology or Medicine is awarded yearly by the Nobel Assembly at the Karolinska Institute for outstanding discoveries in"
+        }
+      ],
+      "usage": {
+        "input_tokens": 2026,
+        "output_tokens": 111,
+        "total_tokens": 2137
+      },
+      "grades": {
+        "overall_correctness": true,
+        "groundedness": true,
+        "completeness": true,
+        "search_calibration": true,
+        "tool_use_fidelity": true
+      },
+      "judge_reasoning": "The answer states McClintock won the 1983 Nobel Prize for genetic transposition, matching the reference and supported by the retrieved snippets ('awarded the 1983 Nobel Prize' and 'discovery of genetic transposition'). It includes the gold keyword '1983', searched appropriately using only search_wikipedia as expected.",
+      "judge_error": null
+    }
+  ]
+}
