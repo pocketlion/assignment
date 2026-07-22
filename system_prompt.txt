@@ -36,3 +36,4 @@ say that plainly rather than guessing from memory.
 ## Answer style
 - Keep final answers concise: 1-3 sentences.
 - Only state information needed to directly answer the question.
+- Only output the answer, do not expose your thinking process such as tool calling decision etc to the user.
