@@ -123,6 +123,12 @@ Quick smoke test on the first few cases only:
 python run_eval.py --limit 5
 ```
 
+Quick smoke test on certain cases with test case ids specified:
+
+```bash
+python run_eval.py --id sf-01 sf-02 
+```
+
 Each run prints a pass-rate summary per criterion
 (`overall_correctness`, `groundedness`, `completeness`, `search_calibration`,
 `tool_use_fidelity`) and writes the full per-case report (agent answer, tool
